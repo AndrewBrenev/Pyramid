@@ -6,6 +6,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QtGui>
+#include <QFileDialog>
 
 
 QT_BEGIN_NAMESPACE
