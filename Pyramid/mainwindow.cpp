@@ -5,9 +5,10 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
 
+    ui->setupUi(this);
 	iteam = nullptr;
+    currentObject= imagesList.end();
 	scene = new QGraphicsScene(this);
 	ui->graphicsView->setScene(scene);
 
@@ -36,13 +37,10 @@ void MainWindow::on_actionAdd_new_triggered()
 
 void MainWindow::setLoadedFiles(const QString& activeImage)
 {
-	ui->comboBox->clear();
-
-	int distance = 0;
+    ui->comboBox->clear();
 	for (auto img : imagesList)
 	{
 		ui->comboBox->addItem(img.fileName);
-		distance++;
 	}
 	ui->comboBox->setCurrentText(activeImage);
 }
@@ -60,7 +58,7 @@ void MainWindow::showCurrentPixmap(const QPixmap& pixmapToShow)
 
 QPixmap MainWindow::buildPyramidLevel(const QPixmap& basePixmap, int level, double crop)
 {
-	if (&basePixmap != nullptr && !basePixmap.isNull())
+    if (&basePixmap != nullptr )
 	{
 		int scale = pow(crop, level);
 		QPixmap resPixmap = basePixmap.scaled(basePixmap.width() / scale, basePixmap.height() / scale, Qt::KeepAspectRatio);
@@ -70,26 +68,26 @@ QPixmap MainWindow::buildPyramidLevel(const QPixmap& basePixmap, int level, doub
 
 void MainWindow::on_spinBox_valueChanged(int arg)
 {
-	if (ui->doubleSpinBox->value() > 0 && arg > 0)
+    if ( currentObject != imagesList.end() )
         showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, arg, ui->doubleSpinBox->value()));
 }
 
 void MainWindow::on_spinBox_valueChanged(const QString& arg)
 {
-	if (ui->doubleSpinBox->value() > 0 && arg.toInt() > 0)
+    if ( currentObject != imagesList.end())
         showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, arg.toInt(), ui->doubleSpinBox->value()));
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(double arg)
 {
-	if (ui->spinBox->value() > 0 && arg > 0)
+    if (currentObject != imagesList.end())
         showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), arg));
 
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(const QString& arg)
 {
-	if (ui->spinBox->value() > 0 && arg.toDouble() > 0)
+    if ( currentObject != imagesList.end())
         showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), arg.toDouble()));
 
 }
@@ -99,8 +97,8 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 {
 	if (index >= 0)
 	{
-		auto it = imagesList.begin();
-		std::advance(it, index);
+        QPixmapContainer::iterator it = imagesList.begin();
+        std::advance(it, index);
         currentObject = it;
         showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), ui->doubleSpinBox->value()));
 	}
