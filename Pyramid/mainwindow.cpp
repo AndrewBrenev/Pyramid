@@ -26,12 +26,11 @@ void MainWindow::on_actionAdd_new_triggered()
 	dialog.setViewMode(QFileDialog::Detail);
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "/home", tr("Images (*.png *.jpg)"));
 
-	currentObject = QPixmap(filePath);
-	filePath = filePath.mid(filePath.lastIndexOf("/") + 1);
-	Image currentImage(currentObject, filePath);
+    QString fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
+    Image currentImage(QPixmap(filePath), fileName);
 	imagesList.insert(currentImage);
-	setLoadedFiles(filePath);
-	showCurrentPixmap(buildPyramidLevel(currentObject, ui->spinBox->value(), ui->doubleSpinBox->value()));
+    setLoadedFiles(fileName);
+    showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), ui->doubleSpinBox->value()));
 
 }
 
@@ -55,7 +54,7 @@ void MainWindow::showCurrentPixmap(const QPixmap& pixmapToShow)
 	iteam = new QGraphicsPixmapItem(pixmapToShow);
 	scene->setSceneRect(pixmapToShow.rect());
 	scene->addItem(iteam);
-	ui->sizeLable->setText(QString::number(currentObject.width()) + "x" + QString::number(currentObject.height()));
+    ui->sizeLable->setText(QString::number(currentObject->pixmap.width()) + "x" + QString::number(currentObject->pixmap.height()));
 }
 
 
@@ -72,26 +71,26 @@ QPixmap MainWindow::buildPyramidLevel(const QPixmap& basePixmap, int level, doub
 void MainWindow::on_spinBox_valueChanged(int arg)
 {
 	if (ui->doubleSpinBox->value() > 0 && arg > 0)
-		showCurrentPixmap(buildPyramidLevel(currentObject, arg, ui->doubleSpinBox->value()));
+        showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, arg, ui->doubleSpinBox->value()));
 }
 
 void MainWindow::on_spinBox_valueChanged(const QString& arg)
 {
 	if (ui->doubleSpinBox->value() > 0 && arg.toInt() > 0)
-		showCurrentPixmap(buildPyramidLevel(currentObject, arg.toInt(), ui->doubleSpinBox->value()));
+        showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, arg.toInt(), ui->doubleSpinBox->value()));
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(double arg)
 {
 	if (ui->spinBox->value() > 0 && arg > 0)
-		showCurrentPixmap(buildPyramidLevel(currentObject, ui->spinBox->value(), arg));
+        showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), arg));
 
 }
 
 void MainWindow::on_doubleSpinBox_valueChanged(const QString& arg)
 {
 	if (ui->spinBox->value() > 0 && arg.toDouble() > 0)
-		showCurrentPixmap(buildPyramidLevel(currentObject, ui->spinBox->value(), arg.toDouble()));
+        showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), arg.toDouble()));
 
 }
 
@@ -102,7 +101,7 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 	{
 		auto it = imagesList.begin();
 		std::advance(it, index);
-		currentObject = it->pixmap;
-		showCurrentPixmap(buildPyramidLevel(currentObject, ui->spinBox->value(), ui->doubleSpinBox->value()));
+        currentObject = it;
+        showCurrentPixmap(buildPyramidLevel(currentObject->pixmap, ui->spinBox->value(), ui->doubleSpinBox->value()));
 	}
 }

@@ -18,9 +18,8 @@ namespace Ui {
 }
 QT_END_NAMESPACE
 
-class Image
+struct Image
 {
-public:
 	QPixmap pixmap;
 	QString fileName;
 
@@ -60,7 +59,8 @@ private:
 	void setLoadedFiles(const QString& activeImage);
 
 	QPixmapContainer imagesList;
-	QPixmap currentObject;
+    QPixmapContainer::iterator currentObject;
+
 	Ui::MainWindow* ui;
 	QGraphicsItem* iteam;
 	QGraphicsScene* scene;
